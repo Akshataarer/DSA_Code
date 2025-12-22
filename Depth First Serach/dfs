@@ -1,1 +1,45 @@
+#include <iostream>
+using namespace std;
+
+int sheds = 5;
+
+// Adjacency matrix representing connectivity between cattle sheds
+// 1 means direct path exists for inspection or movement
+int farm[10][10] = {
+    {0,1,1,0,0},
+    {1,0,0,1,1},
+    {1,0,0,0,1},
+    {0,1,0,0,0},
+    {0,1,1,0,0}
+};
+
+int visited[10];
+
+// DFS function to inspect connected cattle sheds
+void dfs(int farm[10][10], int sheds, int sourceShed) {
+    visited[sourceShed] = 1;
+
+    for (int i = 0; i < sheds; i++) {
+        if (farm[sourceShed][i] == 1 && visited[i] == 0) {
+            cout << i << "\t";
+            dfs(farm, sheds, i);
+        }
+    }
+}
+
+int main() {
+    int sourceShed;
+
+    for (int i = 0; i < sheds; i++)
+        visited[i] = 0;
+
+    cout << "Enter the starting cattle shed for inspection: ";
+    cin >> sourceShed;
+
+    cout << "DFS Traversal (Cattle Health Inspection Order):\n";
+    cout << sourceShed << "\t";
+    dfs(farm, sheds, sourceShed);
+
+    return 0;
+}
 
