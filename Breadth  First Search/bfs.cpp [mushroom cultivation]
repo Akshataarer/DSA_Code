@@ -1,0 +1,55 @@
+#include <iostream>
+using namespace std;
+
+// BFS for Mushroom Growth Stages
+void bfsGrowthStages(int stages[10][10], int totalStages, int startStage) {
+    int queue[20];
+    int front = 0, rear = 0;
+    int visited[10];
+
+    // Initialize all stages as not visited
+    for (int i = 0; i < totalStages; i++)
+        visited[i] = 0;
+
+    // Start BFS from the given stage
+    queue[rear] = startStage;
+    visited[startStage] = 1;
+
+    cout << "BFS Traversal of Mushroom Growth Stages:\n";
+
+    while (front <= rear) {
+        int currentStage = queue[front];
+        cout << "Stage " << currentStage << "\t";
+        front++;
+
+        // Traverse all connected stages
+        for (int i = 0; i < totalStages; i++) {
+            if (stages[currentStage][i] == 1 && visited[i] == 0) {
+                visited[i] = 1;
+                rear++;
+                queue[rear] = i;
+            }
+        }
+    }
+}
+
+int main() {
+    int totalStages = 5;
+
+    // Adjacency matrix for growth stages (edges indicate stage progression)
+    int growthStages[10][10] = {
+        {0,1,1,0,0}, 
+        {0,0,0,1,1},
+        {0,0,0,0,1}, 
+        {0,0,0,0,0}, 
+        {0,0,0,0,0}
+    };
+
+    int startStage;
+    cout << "Enter the starting growth stage (0 to 4): ";
+    cin >> startStage;
+
+    bfsGrowthStages(growthStages, totalStages, startStage);
+
+    return 0;
+}
