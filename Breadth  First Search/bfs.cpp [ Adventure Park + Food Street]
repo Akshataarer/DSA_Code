@@ -1,0 +1,53 @@
+#include <iostream>
+using namespace std;
+
+void bfs(int park[10][10], int nodes, int start) {
+    int queue[20];
+    int front = 0, rear = 0;
+    int visited[10];
+
+    // Initialize all nodes as unvisited
+    for (int i = 0; i < nodes; i++)
+        visited[i] = 0;
+
+    // Start BFS from the source node
+    queue[rear] = start;
+    visited[start] = 1;
+
+    cout << "Visitor path guidance using BFS:\n";
+
+    while (front <= rear) {
+        int current = queue[front];
+        cout << "Node " << current << "\t"; // Node can represent a ride or food stall
+        front++;
+
+        for (int i = 0; i < nodes; i++) {
+            if (park[current][i] == 1 && visited[i] == 0) {
+                visited[i] = 1;
+                rear++;
+                queue[rear] = i;
+            }
+        }
+    }
+}
+
+int main() {
+    int nodes = 5;
+
+    // 1: Roller Coaster, 2: Food Stall, 3: Ferris Wheel, 4: Rest Area, 5: Exit
+    int park[10][10] = {
+        {0,1,1,0,0}, // Connections from Roller Coaster
+        {1,0,0,1,1}, // Connections from Food Stall
+        {1,0,0,0,1}, // Connections from Ferris Wheel
+        {0,1,0,0,0}, // Connections from Rest Area
+        {0,1,1,0,0}  // Connections from Exit
+    };
+
+    int start;
+    cout << "Enter the starting node (0-RollerCoaster, 1-FoodStall, 2-FerrisWheel, 3-RestArea, 4-Exit): ";
+    cin >> start;
+
+    bfs(park, nodes, start);
+
+    return 0;
+}
