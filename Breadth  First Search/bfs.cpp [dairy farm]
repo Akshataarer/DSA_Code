@@ -1,1 +1,55 @@
+#include <iostream>
+using namespace std;
+
+void bfs(int farm[10][10], int groups, int startGroup) {
+    int queue[20];
+    int front = 0, rear = 0;
+    int visited[10];
+
+    // Initialize all groups as unvisited
+    for (int i = 0; i < groups; i++)
+        visited[i] = 0;
+
+    // Start from the chosen cattle group
+    queue[rear] = startGroup;
+    visited[startGroup] = 1;
+
+    cout << "BFS traversal of the dairy farm (group by group):\n";
+
+    while (front <= rear) {
+        int currentGroup = queue[front];
+        cout << "Cattle Group " << currentGroup << "\n";
+        front++;
+
+        // Visit all connected groups
+        for (int i = 0; i < groups; i++) {
+            if (farm[currentGroup][i] == 1 && visited[i] == 0) {
+                visited[i] = 1;
+                rear++;
+                queue[rear] = i;
+            }
+        }
+    }
+}
+
+int main() {
+    int groups = 5;
+
+    // Farm graph: 1 means path exists between groups
+    int farm[10][10] = {
+        {0, 1, 1, 0, 0}, // Connections from Group 0
+        {1, 0, 0, 1, 1}, // Connections from Group 1
+        {1, 0, 0, 0, 1}, // Connections from Group 2
+        {0, 1, 0, 0, 0}, // Connections from Group 3
+        {0, 1, 1, 0, 0}  // Connections from Group 4
+    };
+
+    int startGroup;
+    cout << "Enter the starting cattle group: ";
+    cin >> startGroup;
+
+    bfs(farm, groups, startGroup);
+
+    return 0;
+}
 
