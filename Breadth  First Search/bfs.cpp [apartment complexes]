@@ -1,0 +1,56 @@
+#include <iostream>
+using namespace std;
+
+// Function to perform BFS traversal for nursery monitoring
+void bfsNurseryMonitoring(int nurseryGraph[10][10], int totalSections, int startSection) {
+    int queue[20];      // Queue to manage BFS traversal
+    int front = 0, rear = 0;
+    int visited[10];    // Array to keep track of visited sections
+
+    // Initialize all sections as unvisited
+    for (int i = 0; i < totalSections; i++)
+        visited[i] = 0;
+
+    // Start BFS from the source section
+    queue[rear] = startSection;
+    visited[startSection] = 1;
+
+    cout << "Nursery Monitoring BFS Traversal (Level-wise) is:\n";
+
+    while (front <= rear) {
+        int currentSection = queue[front];
+        cout << "Section " << currentSection << "\t"; // Print the section being monitored
+        front++;
+
+        // Check all connected sections
+        for (int i = 0; i < totalSections; i++) {
+            if (nurseryGraph[currentSection][i] == 1 && visited[i] == 0) {
+                visited[i] = 1;
+                rear++;
+                queue[rear] = i; // Add connected section to queue
+            }
+        }
+    }
+}
+
+int main() {
+    int totalSections = 5;
+
+    // Nursery layout graph (adjacency matrix)
+    // 1 represents connectivity between sections
+    int nurseryGraph[10][10] = {
+        {0, 1, 1, 0, 0},
+        {1, 0, 0, 1, 1},
+        {1, 0, 0, 0, 1},
+        {0, 1, 0, 0, 0},
+        {0, 1, 1, 0, 0}
+    };
+
+    int startSection;
+    cout << "Enter the starting section for monitoring (0-" << totalSections - 1 << "): ";
+    cin >> startSection;
+
+    bfsNurseryMonitoring(nurseryGraph, totalSections, startSection);
+
+    return 0;
+}
