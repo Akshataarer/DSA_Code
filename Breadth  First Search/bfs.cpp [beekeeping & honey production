@@ -1,1 +1,56 @@
+#include <iostream>
+using namespace std;
+
+// Function to perform BFS traversal for hive monitoring
+void bfsHiveMonitoring(int hiveGraph[10][10], int totalHives, int startHive) {
+    int queue[20];      // Queue to manage BFS traversal
+    int front = 0, rear = 0;
+    int visited[10];    // Array to keep track of visited hives
+
+    // Initialize all hives as unvisited
+    for (int i = 0; i < totalHives; i++)
+        visited[i] = 0;
+
+    // Start BFS from the source hive
+    queue[rear] = startHive;
+    visited[startHive] = 1;
+
+    cout << "Hive Monitoring BFS Traversal (Level-wise) is:\n";
+
+    while (front <= rear) {
+        int currentHive = queue[front];
+        cout << "Hive " << currentHive << "\t"; // Print the hive being monitored
+        front++;
+
+        // Check all connected hives
+        for (int i = 0; i < totalHives; i++) {
+            if (hiveGraph[currentHive][i] == 1 && visited[i] == 0) {
+                visited[i] = 1;
+                rear++;
+                queue[rear] = i; // Add connected hive to queue
+            }
+        }
+    }
+}
+
+int main() {
+    int totalHives = 5;
+
+    // Hive connectivity graph (adjacency matrix)
+    int hiveGraph[10][10] = {
+        {0, 1, 1, 0, 0},
+        {1, 0, 0, 1, 1},
+        {1, 0, 0, 0, 1},
+        {0, 1, 0, 0, 0},
+        {0, 1, 1, 0, 0}
+    };
+
+    int startHive;
+    cout << "Enter the starting hive for monitoring (0-" << totalHives - 1 << "): ";
+    cin >> startHive;
+
+    bfsHiveMonitoring(hiveGraph, totalHives, startHive);
+
+    return 0;
+}
 
