@@ -1,0 +1,43 @@
+#include <iostream>
+using namespace std;
+
+// Bottom-Up Heap construction to identify top-performing players
+void BuildMaxHeap(int performance[], int totalPlayers) {
+    for (int i = totalPlayers / 2; i >= 1; i--) {
+        int parent = i;
+        int value = performance[parent];
+        bool heapFormed = false;
+
+        while (!heapFormed && 2 * parent <= totalPlayers) {
+            int child = 2 * parent;  // left child
+
+            // check if right child exists and is better performer
+            if (child < totalPlayers && performance[child] < performance[child + 1]) {
+                child = child + 1;
+            }
+
+            // check max heap property
+            if (value >= performance[child]) {
+                heapFormed = true;
+            } else {
+                performance[parent] = performance[child];
+                parent = child;
+            }
+        }
+
+        performance[parent] = value;
+    }
+}
+
+int main() {
+    // Player performance scores (index starts from 1)
+    int playerScore[20] = {0, 65, 72, 90, 60, 55};
+    int totalPlayers = 5;
+
+    BuildMaxHeap(playerScore, totalPlayers);
+
+    cout << "Top Performing Players Heap: ";
+    for (int i = 1; i <= totalPlayers; i++) {
+        cout << playerScore[i] << " ";
+    }
+}
