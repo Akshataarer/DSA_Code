@@ -1,0 +1,146 @@
+#include <iostream>
+using namespace std;
+
+const int TABLE_SIZE = 10;
+
+// Node structure for separate chaining
+struct Node {
+    int memberID;
+    int membershipType;   // Example: 1-Basic, 2-Premium, 3-Personal Training
+    Node* next;
+
+    Node(int id, int type) {
+        memberID = id;
+        membershipType = type;
+        next = NULL;
+    }
+};
+
+class HashTable {
+private:
+    Node* table[TABLE_SIZE];
+
+    // Hash function using member ID
+    int hashFunction(int key) {
+        return key % TABLE_SIZE;
+    }
+
+public:
+    HashTable() {
+        for (int i = 0; i < TABLE_SIZE; ++i)
+            table[i] = NULL;
+    }
+
+    // Insert or update member record
+    void insert(int memberID, int membershipType) {
+        int hashKey = hashFunction(memberID);
+        Node* newNode = new Node(memberID, membershipType);
+
+        if (table[hashKey] == NULL) {
+            table[hashKey] = newNode;
+        } else {
+            Node* temp = table[hashKey];
+            while (temp->next != NULL) {
+                if (temp->memberID == memberID) {
+                    temp->membershipType = membershipType;
+                    delete newNode;
+                    return;
+                }
+                temp = temp->next;
+            }
+            if (temp->memberID == memberID) {
+                temp->membershipType = membershipType;
+                delete newNode;
+                return;
+            }
+            temp->next = newNode;
+        }
+    }
+
+    // Search member details using ID
+    void search(int memberID) {
+        int hashKey = hashFunction(memberID);
+        Node* temp = table[hashKey];
+
+        while (temp != NULL) {
+            if (temp->memberID == memberID) {
+                cout << "Member ID: " << memberID
+                     << " | Membership Type: " << temp->membershipType << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Member ID " << memberID << " not found." << endl;
+    }
+
+    // Remove member record
+    void remove(int memberID) {
+        int hashKey = hashFunction(memberID);
+        Node* temp = table[hashKey];
+        Node* prev = NULL;
+
+        while (temp != NULL && temp->memberID != memberID) {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        if (temp == NULL) {
+            cout << "Member ID " << memberID << " not found." << endl;
+            return;
+        }
+
+        if (prev == NULL) {
+            table[hashKey] = temp->next;
+        } else {
+            prev->next = temp->next;
+        }
+
+        delete temp;
+        cout << "Member record removed successfully." << endl;
+    }
+};
+
+int main() {
+    HashTable gymMembers;
+    int choice, memberID, membershipType;
+
+    do {
+        cout << "\n1. Add/Update Member"
+             << "\n2. Search Member"
+             << "\n3. Remove Member"
+             << "\n4. Exit"
+             << "\nEnter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter Member ID: ";
+                cin >> memberID;
+                cout << "Enter Membership Type (1-Basic, 2-Premium, 3-PT): ";
+                cin >> membershipType;
+                gymMembers.insert(memberID, membershipType);
+                break;
+
+            case 2:
+                cout << "Enter Member ID to search: ";
+                cin >> memberID;
+                gymMembers.search(memberID);
+                break;
+
+            case 3:
+                cout << "Enter Member ID to remove: ";
+                cin >> memberID;
+                gymMembers.remove(memberID);
+                break;
+
+            case 4:
+                cout << "Exiting Smart Gym System..." << endl;
+                break;
+
+            default:
+                cout << "Invalid choice. Try again." << endl;
+        }
+    } while (choice != 4);
+
+    return 0;
+}
