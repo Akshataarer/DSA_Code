@@ -8,7 +8,7 @@ void buildMaxHeap(int milk[], int n) {
         int value = milk[k];
         bool isHeap = false;
 
-        while (!isHeap && 2 * k <= n) {
+        while (!isHeap && 2 * k <= n) { 
             int j = 2 * k;   // left child
 
             // Check right child
