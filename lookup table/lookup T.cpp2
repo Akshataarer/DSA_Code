@@ -1,0 +1,84 @@
+#include <iostream>
+using namespace std;
+
+// Structure to store environmental data of a beehive
+struct HiveData {
+    string hiveName;
+    float temperature;   // in Celsius
+    float humidity;      // in percentage
+    string airQuality;   // Good / Moderate / Poor
+};
+
+class LookupTable {
+public:
+    HiveData hive1;
+    HiveData hive2;
+    HiveData hive3;
+    HiveData hive4;
+
+    HiveData match(string input);
+    void display(HiveData d);
+
+    LookupTable();
+};
+
+// Initialize lookup table with hive environmental data
+LookupTable::LookupTable() {
+    hive1 = {"Hive_A", 34.5, 60.2, "Good"};
+    hive2 = {"Hive_B", 36.8, 72.5, "Moderate"};
+    hive3 = {"Hive_C", 33.1, 58.9, "Good"};
+    hive4 = {"Hive_D", 38.4, 80.1, "Poor"};
+}
+
+// Constant-time lookup (O(1))
+HiveData LookupTable::match(string input) {
+    if (input == "Hive_A")
+        return hive1;
+    if (input == "Hive_B")
+        return hive2;
+    if (input == "Hive_C")
+        return hive3;
+    if (input == "Hive_D")
+        return hive4;
+
+    return {"", 0, 0, ""};
+}
+
+// Display hive environmental data
+void LookupTable::display(HiveData d) {
+    if (d.hiveName != "") {
+        cout << "Hive Name: " << d.hiveName << endl;
+        cout << "Temperature: " << d.temperature << " °C" << endl;
+        cout << "Humidity: " << d.humidity << " %" << endl;
+        cout << "Air Quality: " << d.airQuality << endl;
+    } else {
+        cout << "Hive data not found." << endl;
+    }
+}
+
+int main() {
+    LookupTable hiveDatabase;
+
+    HiveData h1 = hiveDatabase.match("Hive_A");
+    HiveData h2 = hiveDatabase.match("Hive_B");
+    HiveData h3 = hiveDatabase.match("Hive_C");
+    HiveData h4 = hiveDatabase.match("Hive_D");
+
+    cout << "Hive A Environmental Data:\n";
+    hiveDatabase.display(h1);
+    cout << endl;
+
+    cout << "Hive B Environmental Data:\n";
+    hiveDatabase.display(h2);
+    cout << endl;
+
+    cout << "Hive C Environmental Data:\n";
+    hiveDatabase.display(h3);
+    cout << endl;
+
+    cout << "Hive D Environmental Data:\n";
+    hiveDatabase.display(h4);
+    cout << endl;
+
+    return 0;
+}
