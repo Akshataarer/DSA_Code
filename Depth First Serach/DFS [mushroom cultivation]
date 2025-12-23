@@ -7,7 +7,7 @@ int rooms = 5;
 // 1 indicates direct access for monitoring temperature, humidity, and growth
 int farm[10][10] = {
     {0,1,1,0,0},
-    {1,0,0,1,1},
+    {1,0,0,1,1}, 
     {1,0,0,0,1},
     {0,1,0,0,0},
     {0,1,1,0,0}
