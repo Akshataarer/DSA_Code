@@ -1,0 +1,146 @@
+#include <iostream>
+using namespace std;
+
+const int TABLE_SIZE = 10;
+
+// Node to store food stall details
+struct Node {
+    int stallID;        // Unique Food Stall ID
+    int price;          // Average price / sales value
+    Node* next;
+
+    Node(int id, int p) {
+        stallID = id;
+        price = p;
+        next = NULL;
+    }
+};
+
+class FoodStallHashTable {
+private:
+    Node* table[TABLE_SIZE];
+
+    // Hash function based on stall ID
+    int hashFunction(int key) {
+        return key % TABLE_SIZE;
+    }
+
+public:
+    FoodStallHashTable() {
+        for (int i = 0; i < TABLE_SIZE; i++)
+            table[i] = NULL;
+    }
+
+    // Insert or update food stall details
+    void insert(int stallID, int price) {
+        int hashKey = hashFunction(stallID);
+        Node* newNode = new Node(stallID, price);
+
+        if (table[hashKey] == NULL) {
+            table[hashKey] = newNode;
+        } else {
+            Node* temp = table[hashKey];
+            while (temp->next != NULL) {
+                if (temp->stallID == stallID) {
+                    temp->price = price; // update
+                    delete newNode;
+                    return;
+                }
+                temp = temp->next;
+            }
+            if (temp->stallID == stallID) {
+                temp->price = price;
+                delete newNode;
+                return;
+            }
+            temp->next = newNode;
+        }
+    }
+
+    // Search food stall information
+    void search(int stallID) {
+        int hashKey = hashFunction(stallID);
+        Node* temp = table[hashKey];
+
+        while (temp != NULL) {
+            if (temp->stallID == stallID) {
+                cout << "Food Stall ID: " << stallID
+                     << " | Average Price: " << temp->price << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Food Stall ID " << stallID << " not found\n";
+    }
+
+    // Remove a food stall
+    void remove(int stallID) {
+        int hashKey = hashFunction(stallID);
+        Node* temp = table[hashKey];
+        Node* prev = NULL;
+
+        while (temp != NULL && temp->stallID != stallID) {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        if (temp == NULL) {
+            cout << "Food Stall ID not found\n";
+            return;
+        }
+
+        if (prev == NULL)
+            table[hashKey] = temp->next;
+        else
+            prev->next = temp->next;
+
+        delete temp;
+        cout << "Food Stall removed successfully\n";
+    }
+};
+
+int main() {
+    FoodStallHashTable foodStreet;
+    int choice, stallID, price;
+
+    do {
+        cout << "\n--- Smart Food Street Management ---";
+        cout << "\n1. Add / Update Food Stall";
+        cout << "\n2. Search Food Stall";
+        cout << "\n3. Remove Food Stall";
+        cout << "\n4. Exit";
+        cout << "\nEnter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter Food Stall ID: ";
+            cin >> stallID;
+            cout << "Enter Average Price: ";
+            cin >> price;
+            foodStreet.insert(stallID, price);
+            break;
+
+        case 2:
+            cout << "Enter Food Stall ID to search: ";
+            cin >> stallID;
+            foodStreet.search(stallID);
+            break;
+
+        case 3:
+            cout << "Enter Food Stall ID to remove: ";
+            cin >> stallID;
+            foodStreet.remove(stallID);
+            break;
+
+        case 4:
+            cout << "Exiting system...\n";
+            break;
+
+        default:
+            cout << "Invalid choice\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
