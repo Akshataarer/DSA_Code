@@ -1,0 +1,62 @@
+#include <iostream>
+using namespace std;
+
+// Merge two sorted arrays (performance data of startups)
+void mergePerformance(int left[], int n1, int right[], int n2, int result[]) {
+    int i = 0, j = 0, k = 0;
+
+    // Merge while comparing performance values
+    while (i < n1 && j < n2) {
+        if (left[i] <= right[j])
+            result[k++] = left[i++];
+        else
+            result[k++] = right[j++];
+    }
+
+    // Copy remaining elements
+    if (i == n1) {
+        while (j < n2)
+            result[k++] = right[j++];
+    } else {
+        while (i < n1)
+            result[k++] = left[i++];
+    }
+}
+
+// Merge Sort function to sort startup performance
+void mergeSortPerformance(int performance[], int n) {
+    if (n > 1) {
+        int mid = n / 2;
+
+        int left[mid];        // First half
+        int right[n - mid];   // Second half
+
+        // Copy data into subarrays
+        for (int i = 0; i < mid; i++)
+            left[i] = performance[i];
+
+        for (int i = mid; i < n; i++)
+            right[i - mid] = performance[i];
+
+        // Recursive sorting
+        mergeSortPerformance(left, mid);
+        mergeSortPerformance(right, n - mid);
+
+        // Merge sorted halves
+        mergePerformance(left, mid, right, n - mid, performance);
+    }
+}
+
+int main() {
+    // Startup performance data (attendance / usage score)
+    int performance[] = {8, 3, 7, 4, 2, 9, 5};
+    int totalStartups = 7;
+
+    mergeSortPerformance(performance, totalStartups);
+
+    cout << "Sorted Startup Performance Data:\n";
+    for (int i = 0; i < totalStartups; i++)
+        cout << performance[i] << " ";
+
+    return 0;
+}
