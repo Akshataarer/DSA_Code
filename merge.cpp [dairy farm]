@@ -7,7 +7,7 @@ struct Product {
     int sales;
 };
 
-void Merge(Product B[], int p, Product C[], int q, Product A[]) {
+void Merge(Product B[], int p, Product C[], int q, Product A[]) { 
     int i = 0, j = 0, k = 0;
 
     // Sort in descending order of sales
