@@ -6,7 +6,7 @@ struct Cow {
     int cowID;
     int age;
     float milkProduced;   // liters per day
-    float feedIntake;     // kg per day
+    float feedIntake;     // kg per day 
 } ;
 
 int main() {
