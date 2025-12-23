@@ -1,0 +1,68 @@
+#include <iostream>
+using namespace std;
+
+const int MAX = 20;
+
+int days;                  // Number of days
+int milk[MAX];             // Milk produced each day
+int BIT[MAX];              // Fenwick Tree array
+
+class FenwickTree {
+public:
+    FenwickTree(int d);
+    void build();
+    void update(int day, int milkQty);
+    int query(int day);
+    int totalMilk();
+};
+
+// Constructor to initialize BIT
+FenwickTree::FenwickTree(int d) {
+    for (int i = 0; i <= d; i++)
+        BIT[i] = 0;
+}
+
+// Build Fenwick Tree with daily milk data
+void FenwickTree::build() {
+    for (int i = 1; i <= days; i++) {
+        cout << "Milk produced on day " << i << ": ";
+        cin >> milk[i];
+        update(i, milk[i]);
+    }
+}
+
+// Update milk production for a specific day
+void FenwickTree::update(int day, int milkQty) {
+    for (; day <= days; day += day & -day)
+        BIT[day] += milkQty;
+}
+
+// Get milk production till a given day
+int FenwickTree::query(int day) {
+    int sum = 0;
+    while (day > 0) {
+        sum += BIT[day];
+        day -= day & -day;
+    }
+    return sum;
+}
+
+// Get total milk production
+int FenwickTree::totalMilk() {
+    return query(days);
+}
+
+int main() {
+    cout << "Enter number of days: ";
+    cin >> days;
+
+    FenwickTree farm(days);
+
+    cout << "\nEnter daily milk production data:\n";
+    farm.build();
+
+    cout << "\nTotal milk produced in " << days << " days: "
+         << farm.totalMilk() << " liters\n";
+
+    return 0;
+}
