@@ -1,0 +1,145 @@
+#include <iostream>
+using namespace std;
+
+const int TABLE_SIZE = 10;
+
+// Node for separate chaining
+struct Node {
+    int productID;
+    int stock;
+    Node* next;
+
+    Node(int id, int qty) {
+        productID = id;
+        stock = qty;
+        next = NULL;
+    }
+};
+
+class InventoryHashTable {
+private:
+    Node* table[TABLE_SIZE];
+
+    int hashFunction(int key) {
+        return key % TABLE_SIZE;
+    }
+
+public:
+    InventoryHashTable() {
+        for (int i = 0; i < TABLE_SIZE; i++)
+            table[i] = NULL;
+    }
+
+    // Insert or update product stock
+    void insertProduct(int productID, int stock) {
+        int index = hashFunction(productID);
+        Node* newNode = new Node(productID, stock);
+
+        if (table[index] == NULL) {
+            table[index] = newNode;
+        } else {
+            Node* temp = table[index];
+            while (temp->next != NULL) {
+                if (temp->productID == productID) {
+                    temp->stock = stock;
+                    delete newNode;
+                    return;
+                }
+                temp = temp->next;
+            }
+            if (temp->productID == productID) {
+                temp->stock = stock;
+                delete newNode;
+                return;
+            }
+            temp->next = newNode;
+        }
+    }
+
+    // Search product by ID
+    void searchProduct(int productID) {
+        int index = hashFunction(productID);
+        Node* temp = table[index];
+
+        while (temp != NULL) {
+            if (temp->productID == productID) {
+                cout << "Product ID: " << productID
+                     << " | Stock Available: " << temp->stock << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Product not found in inventory\n";
+    }
+
+    // Remove product
+    void removeProduct(int productID) {
+        int index = hashFunction(productID);
+        Node* temp = table[index];
+        Node* prev = NULL;
+
+        while (temp != NULL && temp->productID != productID) {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        if (temp == NULL) {
+            cout << "Product not found in inventory\n";
+            return;
+        }
+
+        if (prev == NULL)
+            table[index] = temp->next;
+        else
+            prev->next = temp->next;
+
+        delete temp;
+        cout << "Product removed successfully\n";
+    }
+};
+
+int main() {
+    InventoryHashTable inventory;
+    int choice, productID, stock;
+
+    do {
+        cout << "\n--- Café & Mini Mart Inventory Menu ---\n";
+        cout << "1. Add / Update Product\n";
+        cout << "2. Search Product\n";
+        cout << "3. Remove Product\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter Product ID: ";
+                cin >> productID;
+                cout << "Enter Stock Quantity: ";
+                cin >> stock;
+                inventory.insertProduct(productID, stock);
+                break;
+
+            case 2:
+                cout << "Enter Product ID to search: ";
+                cin >> productID;
+                inventory.searchProduct(productID);
+                break;
+
+            case 3:
+                cout << "Enter Product ID to remove: ";
+                cin >> productID;
+                inventory.removeProduct(productID);
+                break;
+
+            case 4:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Try again.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
