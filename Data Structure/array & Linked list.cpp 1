@@ -1,1 +1,215 @@
+#include <iostream>
+using namespace std;
+
+// Structure to store cow information
+struct Cow {
+    int cowID;
+    int age;
+    float milkProduced;   // liters per day
+    float feedIntake;     // kg per day
+    Cow* next;
+    Cow* prev;
+};
+
+// Function prototypes
+void displayFarm(Cow* head);
+Cow* insertAtFront(Cow* head);
+Cow* insertAtEnd(Cow* head);
+Cow* deleteAtFront(Cow* head);
+Cow* deleteAtEnd(Cow* head);
+Cow* insertInBetween(Cow* head);
+Cow* deleteInBetween(Cow* head);
+int countCows(Cow* head);
+
+int main() {
+    Cow* head = nullptr;
+    int ch;
+
+    while (true) {
+        cout << "\nSmart Dairy Farm Menu:\n";
+        cout << "1. Display Cattle Records\n";
+        cout << "2. Insert Cow at Front\n";
+        cout << "3. Exit\n";
+        cout << "4. Insert Cow at End\n";
+        cout << "5. Delete Cow at Front\n";
+        cout << "6. Delete Cow at End\n";
+        cout << "7. Count Total Cows\n";
+        cout << "8. Delete Cow in Between\n";
+        cout << "Enter your choice: ";
+        cin >> ch;
+
+        switch (ch) {
+            case 1: displayFarm(head); break;
+            case 2: head = insertAtFront(head); break;
+            case 3: exit(0);
+            case 4: head = insertAtEnd(head); break;
+            case 5: head = deleteAtFront(head); break;
+            case 6: head = deleteAtEnd(head); break;
+            case 7: countCows(head); break;
+            case 8: head = deleteInBetween(head); break;
+            default: cout << "Invalid choice\n"; break;
+        }
+    }
+
+    return 0;
+}
+
+// Display all cow records
+void displayFarm(Cow* head) {
+    if (!head) {
+        cout << "No cows in the farm.\n";
+        return;
+    }
+    Cow* temp = head;
+    while (temp) {
+        cout << "Cow ID: " << temp->cowID 
+             << " | Age: " << temp->age 
+             << " | Milk: " << temp->milkProduced << " L"
+             << " | Feed: " << temp->feedIntake << " kg" << endl;
+        temp = temp->next;
+    }
+}
+
+// Insert cow at the front
+Cow* insertAtFront(Cow* head) {
+    Cow* ptr = new Cow();
+    cout << "Enter Cow ID, Age, Milk Produced, Feed Intake: ";
+    cin >> ptr->cowID >> ptr->age >> ptr->milkProduced >> ptr->feedIntake;
+
+    if (!head) {
+        ptr->next = nullptr;
+        ptr->prev = nullptr;
+        return ptr;
+    }
+
+    ptr->next = head;
+    head->prev = ptr;
+    ptr->prev = nullptr;
+    return ptr;
+}
+
+// Insert cow at the end
+Cow* insertAtEnd(Cow* head) {
+    Cow* ptr = new Cow();
+    cout << "Enter Cow ID, Age, Milk Produced, Feed Intake: ";
+    cin >> ptr->cowID >> ptr->age >> ptr->milkProduced >> ptr->feedIntake;
+
+    if (!head) {
+        ptr->next = nullptr;
+        ptr->prev = nullptr;
+        return ptr;
+    }
+
+    Cow* temp = head;
+    while (temp->next) temp = temp->next;
+
+    temp->next = ptr;
+    ptr->prev = temp;
+    ptr->next = nullptr;
+    return head;
+}
+
+// Delete cow at the front
+Cow* deleteAtFront(Cow* head) {
+    if (!head) {
+        cout << "No cows to delete.\n";
+        return nullptr;
+    }
+
+    Cow* temp = head;
+    head = head->next;
+    if (head) head->prev = nullptr;
+
+    cout << "Deleted Cow ID: " << temp->cowID << endl;
+    delete temp;
+    return head;
+}
+
+// Delete cow at the end
+Cow* deleteAtEnd(Cow* head) {
+    if (!head) {
+        cout << "No cows to delete.\n";
+        return nullptr;
+    }
+
+    if (!head->next) {
+        cout << "Deleted Cow ID: " << head->cowID << endl;
+        delete head;
+        return nullptr;
+    }
+
+    Cow* temp = head;
+    while (temp->next) temp = temp->next;
+
+    temp->prev->next = nullptr;
+    cout << "Deleted Cow ID: " << temp->cowID << endl;
+    delete temp;
+    return head;
+}
+
+// Count total cows
+int countCows(Cow* head) {
+    int cnt = 0;
+    Cow* temp = head;
+    while (temp) {
+        cnt++;
+        temp = temp->next;
+    }
+    cout << "Total cows in farm: " << cnt << endl;
+    return cnt;
+}
+
+// Insert cow in between
+Cow* insertInBetween(Cow* head) {
+    int pos;
+    cout << "Enter position to insert cow: ";
+    cin >> pos;
+
+    if (pos < 1 || pos > countCows(head) + 1) {
+        cout << "Invalid position\n";
+        return head;
+    }
+
+    if (pos == 1) return insertAtFront(head);
+    if (pos == countCows(head) + 1) return insertAtEnd(head);
+
+    Cow* ptr = new Cow();
+    cout << "Enter Cow ID, Age, Milk Produced, Feed Intake: ";
+    cin >> ptr->cowID >> ptr->age >> ptr->milkProduced >> ptr->feedIntake;
+
+    Cow* temp = head;
+    for (int i = 1; i < pos - 1; i++) temp = temp->next;
+
+    ptr->next = temp->next;
+    ptr->prev = temp;
+    temp->next->prev = ptr;
+    temp->next = ptr;
+
+    return head;
+}
+
+// Delete cow in between
+Cow* deleteInBetween(Cow* head) {
+    int pos;
+    cout << "Enter position to delete cow: ";
+    cin >> pos;
+
+    if (pos < 1 || pos > countCows(head)) {
+        cout << "Invalid position\n";
+        return head;
+    }
+
+    if (pos == 1) return deleteAtFront(head);
+    if (pos == countCows(head)) return deleteAtEnd(head);
+
+    Cow* temp = head;
+    for (int i = 1; i < pos; i++) temp = temp->next;
+
+    temp->prev->next = temp->next;
+    temp->next->prev = temp->prev;
+
+    cout << "Deleted Cow ID: " << temp->cowID << endl;
+    delete temp;
+    return head;
+}
 
