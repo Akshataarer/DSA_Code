@@ -1,0 +1,167 @@
+#include <iostream>
+using namespace std;
+
+const int TABLE_SIZE = 10;
+
+// Node to store startup/member details
+struct MemberNode
+{
+    int startupID;        // Unique Startup / Member ID
+    int membershipType;   // Membership / access value
+    MemberNode* next;
+
+    MemberNode(int id, int type)
+    {
+        startupID = id;
+        membershipType = type;
+        next = NULL;
+    }
+};
+
+// Hash Table class for member management
+class MemberHashTable
+{
+private:
+    MemberNode* table[TABLE_SIZE];
+
+    // Hash function
+    int hashFunction(int startupID)
+    {
+        return startupID % TABLE_SIZE;
+    }
+
+public:
+    MemberHashTable()
+    {
+        for (int i = 0; i < TABLE_SIZE; ++i)
+            table[i] = NULL;
+    }
+
+    // Insert or update member details
+    void insertMember(int startupID, int membershipType)
+    {
+        int hashKey = hashFunction(startupID);
+        MemberNode* newNode = new MemberNode(startupID, membershipType);
+
+        if (table[hashKey] == NULL)
+        {
+            table[hashKey] = newNode;
+        }
+        else
+        {
+            MemberNode* temp = table[hashKey];
+            while (temp->next != NULL)
+            {
+                if (temp->startupID == startupID)
+                {
+                    temp->membershipType = membershipType;
+                    delete newNode;
+                    return;
+                }
+                temp = temp->next;
+            }
+            if (temp->startupID == startupID)
+            {
+                temp->membershipType = membershipType;
+                delete newNode;
+                return;
+            }
+            temp->next = newNode;
+        }
+    }
+
+    // Search member by Startup ID
+    void searchMember(int startupID)
+    {
+        int hashKey = hashFunction(startupID);
+        MemberNode* temp = table[hashKey];
+
+        while (temp != NULL)
+        {
+            if (temp->startupID == startupID)
+            {
+                cout << "Membership Type: " << temp->membershipType << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Startup ID " << startupID << " not found" << endl;
+    }
+
+    // Remove member record
+    void removeMember(int startupID)
+    {
+        int hashKey = hashFunction(startupID);
+        MemberNode* temp = table[hashKey];
+        MemberNode* prev = NULL;
+
+        while (temp != NULL && temp->startupID != startupID)
+        {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        if (temp == NULL)
+        {
+            cout << "Startup ID " << startupID << " not found" << endl;
+            return;
+        }
+
+        if (prev == NULL)
+            table[hashKey] = temp->next;
+        else
+            prev->next = temp->next;
+
+        delete temp;
+        cout << "Startup ID " << startupID << " removed successfully" << endl;
+    }
+};
+
+int main()
+{
+    MemberHashTable memberTable;
+    int choice, startupID, membershipType;
+
+    do
+    {
+        cout << "\n--- Smart Co-Working Centre Member Management ---\n";
+        cout << "1. Add / Update Startup Member\n";
+        cout << "2. Search Startup Member\n";
+        cout << "3. Remove Startup Member\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+            case 1:
+                cout << "Enter Startup ID: ";
+                cin >> startupID;
+                cout << "Enter Membership Type (value): ";
+                cin >> membershipType;
+                memberTable.insertMember(startupID, membershipType);
+                break;
+
+            case 2:
+                cout << "Enter Startup ID to search: ";
+                cin >> startupID;
+                memberTable.searchMember(startupID);
+                break;
+
+            case 3:
+                cout << "Enter Startup ID to remove: ";
+                cin >> startupID;
+                memberTable.removeMember(startupID);
+                break;
+
+            case 4:
+                cout << "Exiting member management system..." << endl;
+                break;
+
+            default:
+                cout << "Invalid choice. Try again." << endl;
+        }
+    } while (choice != 4);
+
+    return 0;
+}
