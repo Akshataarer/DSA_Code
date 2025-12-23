@@ -1,0 +1,90 @@
+#include <iostream>
+using namespace std;
+
+// Trie Node structure for storing honey info
+struct TrieNode {
+    TrieNode* children[26];
+    int honeyCount; // Count of honey entries ending at this node
+
+    TrieNode() {
+        honeyCount = 0;
+        for (int i = 0; i < 26; i++) {
+            children[i] = NULL;
+        }
+    }
+};
+
+// Insert a honey type, grade, or flower source into the Trie
+void insert(TrieNode* root, const string& honeyInfo) {
+    TrieNode* current = root;
+    for (char c : honeyInfo) {
+        int index = tolower(c) - 'a';
+        if (current->children[index] == NULL)
+            current->children[index] = new TrieNode();
+        current = current->children[index];
+    }
+    current->honeyCount++;
+}
+
+// Search for a honey type/grade/flower in the Trie
+bool search(TrieNode* root, const string& honeyInfo) {
+    TrieNode* current = root;
+    for (char c : honeyInfo) {
+        int index = tolower(c) - 'a';
+        if (current->children[index] == NULL)
+            return false;
+        current = current->children[index];
+    }
+    return current->honeyCount > 0;
+}
+
+// Display all honey entries in the Trie
+void displayAllHoney(TrieNode* root, string prefix) {
+    if (root->honeyCount > 0) {
+        cout << prefix << "\n";
+    }
+    for (int i = 0; i < 26; i++) {
+        if (root->children[i] != NULL) {
+            char nextChar = 'a' + i;
+            displayAllHoney(root->children[i], prefix + nextChar);
+        }
+    }
+}
+
+int main() {
+    TrieNode* root = new TrieNode();
+    int choice;
+
+    while (true) {
+        cout << "\n--- Honey Management Menu ---\n";
+        cout << "1. Insert Honey Info\n2. Search Honey Info\n3. Display All Honey Info\n4. Exit\nEnter your choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            string honeyInfo;
+            cout << "Enter honey type, grade, or flower source: ";
+            cin >> honeyInfo;
+            insert(root, honeyInfo);
+            cout << "Honey info inserted successfully.\n";
+        } else if (choice == 2) {
+            string honeyInfo;
+            cout << "Enter honey info to search: ";
+            cin >> honeyInfo;
+            if (search(root, honeyInfo)) {
+                cout << "Honey info found.\n";
+            } else {
+                cout << "Honey info not found.\n";
+            }
+        } else if (choice == 3) {
+            cout << "All Honey Info:\n";
+            displayAllHoney(root, "");
+        } else if (choice == 4) {
+            cout << "Exiting program.\n";
+            break;
+        } else {
+            cout << "Invalid choice. Please try again.\n";
+        }
+    }
+
+    return 0;
+}
