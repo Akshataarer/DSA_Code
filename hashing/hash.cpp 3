@@ -1,0 +1,168 @@
+#include <iostream>
+using namespace std;
+
+const int TABLE_SIZE = 10;
+
+// Node structure for chaining
+struct Node
+{
+    int chamberID;        // Unique ID of mushroom chamber
+    int sensorValue;      // Temperature / humidity / yield value
+    Node* next;
+
+    Node(int id, int val)
+    {
+        chamberID = id;
+        sensorValue = val;
+        next = NULL;
+    }
+};
+
+class HashTable
+{
+private:
+    Node* table[TABLE_SIZE];
+
+    // Hash function using chamber ID
+    int hashFunction(int chamberID)
+    {
+        return chamberID % TABLE_SIZE;
+    }
+
+public:
+    HashTable()
+    {
+        for (int i = 0; i < TABLE_SIZE; i++)
+            table[i] = NULL;
+    }
+
+    // Insert or update chamber data
+    void insert(int chamberID, int sensorValue)
+    {
+        int hashKey = hashFunction(chamberID);
+        Node* newNode = new Node(chamberID, sensorValue);
+
+        if (table[hashKey] == NULL)
+        {
+            table[hashKey] = newNode;
+        }
+        else
+        {
+            Node* temp = table[hashKey];
+            while (temp->next != NULL)
+            {
+                if (temp->chamberID == chamberID)
+                {
+                    temp->sensorValue = sensorValue;
+                    delete newNode;
+                    return;
+                }
+                temp = temp->next;
+            }
+
+            if (temp->chamberID == chamberID)
+            {
+                temp->sensorValue = sensorValue;
+                delete newNode;
+                return;
+            }
+            temp->next = newNode;
+        }
+    }
+
+    // Search chamber data
+    void search(int chamberID)
+    {
+        int hashKey = hashFunction(chamberID);
+        Node* temp = table[hashKey];
+
+        while (temp != NULL)
+        {
+            if (temp->chamberID == chamberID)
+            {
+                cout << "Chamber ID: " << chamberID
+                     << " | Sensor Value: " << temp->sensorValue << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Chamber ID " << chamberID << " not found.\n";
+    }
+
+    // Remove chamber data
+    void remove(int chamberID)
+    {
+        int hashKey = hashFunction(chamberID);
+        Node* temp = table[hashKey];
+        Node* prev = NULL;
+
+        while (temp != NULL && temp->chamberID != chamberID)
+        {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        if (temp == NULL)
+        {
+            cout << "Chamber ID " << chamberID << " not found.\n";
+            return;
+        }
+
+        if (prev == NULL)
+            table[hashKey] = temp->next;
+        else
+            prev->next = temp->next;
+
+        delete temp;
+        cout << "Chamber data removed successfully.\n";
+    }
+};
+
+int main()
+{
+    HashTable hashTable;
+    int choice, chamberID, value;
+
+    do
+    {
+        cout << "\nSmart Mushroom Cultivation System";
+        cout << "\n1. Insert / Update Chamber Data";
+        cout << "\n2. Search Chamber Data";
+        cout << "\n3. Remove Chamber Data";
+        cout << "\n4. Exit";
+        cout << "\nEnter your choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+            case 1:
+                cout << "Enter Chamber ID: ";
+                cin >> chamberID;
+                cout << "Enter Sensor Value (Temp/Yield): ";
+                cin >> value;
+                hashTable.insert(chamberID, value);
+                break;
+
+            case 2:
+                cout << "Enter Chamber ID to search: ";
+                cin >> chamberID;
+                hashTable.search(chamberID);
+                break;
+
+            case 3:
+                cout << "Enter Chamber ID to remove: ";
+                cin >> chamberID;
+                hashTable.remove(chamberID);
+                break;
+
+            case 4:
+                cout << "Exiting system...\n";
+                break;
+
+            default:
+                cout << "Invalid choice. Try again.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
