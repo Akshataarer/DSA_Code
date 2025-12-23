@@ -1,1 +1,48 @@
+#include <iostream>
+using namespace std;
+
+// Bottom-Up Heap construction for milk production
+void buildMaxHeap(int milk[], int n) {
+    for (int i = n / 2; i >= 1; i--) {
+        int k = i;
+        int value = milk[k];
+        bool isHeap = false;
+
+        while (!isHeap && 2 * k <= n) {
+            int j = 2 * k;   // left child
+
+            // Check right child
+            if (j < n && milk[j] < milk[j + 1]) {
+                j = j + 1;   // choose higher milk-producing cow
+            }
+
+            // Heap condition
+            if (value >= milk[j]) {
+                isHeap = true;
+            } else {
+                milk[k] = milk[j];
+                k = j;
+            }
+        }
+        milk[k] = value;
+    }
+}
+
+int main() {
+    // Milk production of cows (index starts from 1)
+    int milk[20] = {0, 12, 8, 15, 6, 10};
+    int cows = 5;
+
+    buildMaxHeap(milk, cows);
+
+    cout << "Milk Production Heap (Highest producer at top):\n";
+    for (int i = 1; i <= cows; i++) {
+        cout << milk[i] << " ";
+    }
+
+    cout << "\n\nHighest milk-producing cow gives: "
+         << milk[1] << " liters";
+
+    return 0;
+}
 
