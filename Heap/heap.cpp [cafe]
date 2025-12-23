@@ -1,0 +1,47 @@
+#include <iostream>
+using namespace std;
+
+// Bottom-Up Heap construction for product sales
+void buildMaxHeap(int sales[], int n) {
+    for (int i = n / 2; i >= 1; i--) {
+        int k = i;
+        int value = sales[k];
+        bool isHeap = false;
+
+        while (!isHeap && 2 * k <= n) {
+            int j = 2 * k;   // left child
+
+            // Check right child
+            if (j < n && sales[j] < sales[j + 1]) {
+                j = j + 1;   // choose higher-selling product
+            }
+
+            // Heap condition
+            if (value >= sales[j]) {
+                isHeap = true;
+            } else {
+                sales[k] = sales[j];
+                k = j;
+            }
+        }
+        sales[k] = value;
+    }
+}
+
+int main() {
+    // Sales count of products (index starts from 1)
+    int sales[20] = {0, 120, 80, 150, 60, 100};
+    int products = 5;
+
+    buildMaxHeap(sales, products);
+
+    cout << "Product Sales Heap (Most popular item at top):\n";
+    for (int i = 1; i <= products; i++) {
+        cout << sales[i] << " ";
+    }
+
+    cout << "\n\nHighest-selling product sold: "
+         << sales[1] << " units";
+
+    return 0;
+}
