@@ -1,0 +1,48 @@
+#include <iostream>
+using namespace std;
+
+// Bottom-Up Max Heap construction for ride/food stall popularity
+void buildMaxHeap(int demand[], int n) {
+    for (int i = n / 2; i >= 1; i--) {
+        int k = i;
+        int value = demand[k];
+        bool isHeap = false;
+
+        while (!isHeap && 2 * k <= n) {
+            int j = 2 * k;   // left child
+
+            // Check right child
+            if (j < n && demand[j] < demand[j + 1]) {
+                j = j + 1;   // choose higher-demand attraction
+            }
+
+            // Heap condition
+            if (value >= demand[j]) {
+                isHeap = true;
+            } else {
+                demand[k] = demand[j];
+                k = j;
+            }
+        }
+        demand[k] = value;
+    }
+}
+
+int main() {
+    // Demand count of rides / food stalls (index starts from 1)
+    // 1: Roller Coaster, 2: Food Street, 3: Ferris Wheel, 4: Water Ride, 5: Snack Zone
+    int demand[20] = {0, 250, 180, 320, 150, 200};
+    int attractions = 5;
+
+    buildMaxHeap(demand, attractions);
+
+    cout << "Attraction Demand Heap (Most popular attraction at top):\n";
+    for (int i = 1; i <= attractions; i++) {
+        cout << demand[i] << " ";
+    }
+
+    cout << "\n\nMost popular attraction demand: "
+         << demand[1] << " visitors";
+
+    return 0;
+}
