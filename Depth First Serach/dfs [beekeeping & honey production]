@@ -9,7 +9,7 @@ int gym[10][10] = {
     {0,1,0,0,0},  // Section 3 connected to 1
     {0,1,1,0,0}   // Section 4 connected to 1,2
 };
-int visited[10];
+int visited[10]; 
 
 // DFS traversal to inspect gym sections in detail
 void dfs(int gym[10][10], int sections, int startSection) {
