@@ -1,69 +1,55 @@
 #include <iostream>
 using namespace std;
 
-struct Product {
-    int id;
-    string name;
-    int sales;
-};
-
-void Merge(Product B[], int p, Product C[], int q, Product A[]) { 
+// Merge two sorted lists of milk production
+void Merge(int left[], int l, int right[], int r, int result[]) {
     int i = 0, j = 0, k = 0;
 
-    // Sort in descending order of sales
-    while (i < p && j < q) {
-        if (B[i].sales >= C[j].sales)
-            A[k++] = B[i++];
+    while (i < l && j < r) {
+        if (left[i] <= right[j])
+            result[k++] = left[i++];   // lower milk first
         else
-            A[k++] = C[j++];
+            result[k++] = right[j++];
     }
 
-    while (i < p)
-        A[k++] = B[i++];
+    while (i < l)
+        result[k++] = left[i++];
 
-    while (j < q)
-        A[k++] = C[j++];
+    while (j < r)
+        result[k++] = right[j++];
 }
 
-void MergeSort(Product A[], int n) {
+// Merge Sort to sort milk yield of cows
+void MergeSort(int milk[], int n) {
     if (n > 1) {
         int mid = n / 2;
 
-        Product B[mid];
-        Product C[n - mid];
+        int left[mid];
+        int right[n - mid];
 
         for (int i = 0; i < mid; i++)
-            B[i] = A[i];
+            left[i] = milk[i];
 
         for (int i = mid; i < n; i++)
-            C[i - mid] = A[i];
+            right[i - mid] = milk[i];
 
-        MergeSort(B, mid);
-        MergeSort(C, n - mid);
+        MergeSort(left, mid);
+        MergeSort(right, n - mid);
 
-        Merge(B, mid, C, n - mid, A);
+        Merge(left, mid, right, n - mid, milk);
     }
 }
 
 int main() {
-    Product products[] = {
-        {101, "Coffee", 120},
-        {102, "Sandwich", 80},
-        {103, "Juice", 150},
-        {104, "Cake", 60},
-        {105, "Burger", 100}
-    };
+    // Milk production (liters) of cows
+    int milk[] = {12, 7, 15, 9, 5, 18, 10};
+    int cows = 7;
 
-    int n = 5;
+    MergeSort(milk, cows);
 
-    MergeSort(products, n);
-
-    cout << "Products Sorted by Sales (High to Low):\n";
-    for (int i = 0; i < n; i++) {
-        cout << products[i].id << " "
-             << products[i].name << " "
-             << products[i].sales << endl;
-    }
+    cout << "Milk Production after Sorting (Low → High): ";
+    for (int i = 0; i < cows; i++)
+        cout << milk[i] << " ";
 
     return 0;
 }
