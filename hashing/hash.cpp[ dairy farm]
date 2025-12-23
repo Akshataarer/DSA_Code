@@ -1,1 +1,148 @@
+#include <iostream>
+using namespace std;
+
+const int TABLE_SIZE = 10;
+
+// Node to store cow data
+struct Node {
+    int cowID;          // Unique cow ID (key)
+    int milkProduced;   // Milk produced (value)
+    Node* next;
+
+    Node(int id, int milk) {
+        cowID = id;
+        milkProduced = milk;
+        next = NULL;
+    }
+};
+
+class CowHashTable {
+private:
+    Node* table[TABLE_SIZE];
+
+    // Hash function
+    int hashFunction(int cowID) {
+        return cowID % TABLE_SIZE;
+    }
+
+public:
+    CowHashTable() {
+        for (int i = 0; i < TABLE_SIZE; i++)
+            table[i] = NULL;
+    }
+
+    // Insert or update cow record
+    void insert(int cowID, int milkProduced) {
+        int hashKey = hashFunction(cowID);
+        Node* newNode = new Node(cowID, milkProduced);
+
+        if (table[hashKey] == NULL) {
+            table[hashKey] = newNode;
+        } else {
+            Node* temp = table[hashKey];
+            while (temp->next != NULL) {
+                if (temp->cowID == cowID) {
+                    temp->milkProduced = milkProduced;
+                    delete newNode;
+                    return;
+                }
+                temp = temp->next;
+            }
+            if (temp->cowID == cowID) {
+                temp->milkProduced = milkProduced;
+                delete newNode;
+                return;
+            }
+            temp->next = newNode;
+        }
+    }
+
+    // Search cow using Cow ID
+    void search(int cowID) {
+        int hashKey = hashFunction(cowID);
+        Node* temp = table[hashKey];
+
+        while (temp != NULL) {
+            if (temp->cowID == cowID) {
+                cout << "Cow ID: " << cowID
+                     << " | Milk Produced: " << temp->milkProduced
+                     << " liters\n";
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Cow ID " << cowID << " not found in farm records\n";
+    }
+
+    // Remove cow record
+    void remove(int cowID) {
+        int hashKey = hashFunction(cowID);
+        Node* temp = table[hashKey];
+        Node* prev = NULL;
+
+        while (temp != NULL && temp->cowID != cowID) {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        if (temp == NULL) {
+            cout << "Cow ID " << cowID << " not found\n";
+            return;
+        }
+
+        if (prev == NULL)
+            table[hashKey] = temp->next;
+        else
+            prev->next = temp->next;
+
+        delete temp;
+        cout << "Cow ID " << cowID << " removed from records\n";
+    }
+};
+
+int main() {
+    CowHashTable farm;
+    int choice, cowID, milk;
+
+    do {
+        cout << "\n--- Smart Dairy Farm Hash Menu ---\n";
+        cout << "1. Add / Update Cow Record\n";
+        cout << "2. Search Cow Record\n";
+        cout << "3. Remove Cow Record\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter Cow ID: ";
+                cin >> cowID;
+                cout << "Enter Milk Produced (liters): ";
+                cin >> milk;
+                farm.insert(cowID, milk);
+                break;
+
+            case 2:
+                cout << "Enter Cow ID to search: ";
+                cin >> cowID;
+                farm.search(cowID);
+                break;
+
+            case 3:
+                cout << "Enter Cow ID to remove: ";
+                cin >> cowID;
+                farm.remove(cowID);
+                break;
+
+            case 4:
+                cout << "Exiting Smart Dairy Farm System...\n";
+                break;
+
+            default:
+                cout << "Invalid choice\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
 
