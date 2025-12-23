@@ -1,0 +1,171 @@
+#include <iostream>
+using namespace std;
+
+const int TABLE_SIZE = 10;
+
+// Node to store player record
+struct PlayerNode
+{
+    int playerID;        // Unique player ID
+    int performance;     // Player performance score
+    PlayerNode* next;
+
+    PlayerNode(int id, int score)
+    {
+        playerID = id;
+        performance = score;
+        next = NULL;
+    }
+};
+
+// Hash Table for player record management
+class PlayerHashTable
+{
+private:
+    PlayerNode* table[TABLE_SIZE];
+
+    // Hash function to map player ID
+    int hashFunction(int playerID)
+    {
+        return playerID % TABLE_SIZE;
+    }
+
+public:
+    PlayerHashTable()
+    {
+        for (int i = 0; i < TABLE_SIZE; ++i)
+            table[i] = NULL;
+    }
+
+    // Insert or update player record
+    void insert(int playerID, int performance)
+    {
+        int hashKey = hashFunction(playerID);
+        PlayerNode* newNode = new PlayerNode(playerID, performance);
+
+        if (table[hashKey] == NULL)
+        {
+            table[hashKey] = newNode;
+        }
+        else
+        {
+            PlayerNode* temp = table[hashKey];
+
+            while (temp->next != NULL)
+            {
+                if (temp->playerID == playerID)
+                {
+                    temp->performance = performance;
+                    delete newNode;
+                    return;
+                }
+                temp = temp->next;
+            }
+
+            if (temp->playerID == playerID)
+            {
+                temp->performance = performance;
+                delete newNode;
+                return;
+            }
+            temp->next = newNode;
+        }
+    }
+
+    // Search player by ID
+    void search(int playerID)
+    {
+        int hashKey = hashFunction(playerID);
+        PlayerNode* temp = table[hashKey];
+
+        while (temp != NULL)
+        {
+            if (temp->playerID == playerID)
+            {
+                cout << "Player Performance Score: "
+                     << temp->performance << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Player ID " << playerID << " not found" << endl;
+    }
+
+    // Remove player record
+    void remove(int playerID)
+    {
+        int hashKey = hashFunction(playerID);
+        PlayerNode* temp = table[hashKey];
+        PlayerNode* prev = NULL;
+
+        while (temp != NULL && temp->playerID != playerID)
+        {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        if (temp == NULL)
+        {
+            cout << "Player ID " << playerID << " not found" << endl;
+            return;
+        }
+
+        if (prev == NULL)
+        {
+            table[hashKey] = temp->next;
+        }
+        else
+        {
+            prev->next = temp->next;
+        }
+        delete temp;
+    }
+};
+
+int main()
+{
+    PlayerHashTable academy;
+    int choice, playerID, performance;
+
+    do
+    {
+        cout << "\n1. Add / Update Player"
+             << "\n2. Search Player"
+             << "\n3. Remove Player"
+             << "\n4. Exit"
+             << "\nEnter your choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+            case 1:
+                cout << "Enter Player ID: ";
+                cin >> playerID;
+                cout << "Enter Performance Score: ";
+                cin >> performance;
+                academy.insert(playerID, performance);
+                break;
+
+            case 2:
+                cout << "Enter Player ID to search: ";
+                cin >> playerID;
+                academy.search(playerID);
+                break;
+
+            case 3:
+                cout << "Enter Player ID to remove: ";
+                cin >> playerID;
+                academy.remove(playerID);
+                break;
+
+            case 4:
+                cout << "Exiting Sports Academy System..." << endl;
+                break;
+
+            default:
+                cout << "Invalid choice. Try again." << endl;
+        }
+    } while (choice != 4);
+
+    return 0;
+}
